@@ -24,17 +24,14 @@ function MainApp() {
   });
 
   useEffect(() => {
+    // Update localStorage whenever darkMode changes
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
   }, [darkMode]);
 
   return (
     <ThemeContext.Provider value={{ darkMode, setDarkMode }}>
-      <div className="fixed top-0 left-0 w-full z-50">
-        <Header />
-      </div>
-      <div className="pt-[4rem] bg-[#0f0412]">
-        <RouterProvider router={router} />
-      </div>
+      <Header />
+      <RouterProvider router={router} />
     </ThemeContext.Provider>
   );
 }

@@ -11,17 +11,19 @@ function ThemeIcon() {
 
     return (
         <button
-            className={`rounded-lg border-1 p-2 absolute right-8 xl:right-32 shadow-lg ${
-                darkMode
-                ? "shadow-gray-800 bg-slate-700 border-neutral-900"
-                : "bg-[#2b2a3d] border-[#fff] shadow-[#838282]"
-            }`}
+            className={`relative flex items-center justify-center rounded-full p-2 transition-all duration-300 ease-in-out
+                ${darkMode
+                    ? "bg-slate-700 border-neutral-900 shadow-gray-800"
+                    : "bg-[#2b2a3d] border-[#fff] shadow-[#838282]"
+                }
+                w-10 h-10 
+            `}
             onClick={toggleDarkMode}
         >
             {darkMode ? (
-                <MoonIcon className="stroke-yellow-500 fill-yellow-500 h-6 w-6 cursor-pointer stroke-1" />
+                <MoonIcon className="stroke-yellow-500 fill-yellow-500 w-6 h-6 cursor-pointer" />
             ) : (
-                <SunIcon className="h-6 w-6 cursor-pointer stroke-1 fill-yellow-500" />
+                <SunIcon className="stroke-yellow-500 fill-yellow-500 w-6 h-6 cursor-pointer" />
             )}
         </button>
     );

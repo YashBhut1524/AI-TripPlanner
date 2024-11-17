@@ -3,7 +3,7 @@ import Hero from "./components/custom/Hero";
 function App() {
   return (
     <div>
-      <div className="h-[calc(100vh-4rem)]">
+      <div>
         {/* Hero section */}
         <Hero />
       </div>
