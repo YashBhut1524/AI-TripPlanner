@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { Input } from "@/components/ui/input";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import toast from "react-hot-toast";
@@ -8,8 +8,8 @@ import { SelectBudgetOptions, SelectTravelerList } from "@/constans/options.js";
 function CreateTrip() {
     const { darkMode } = useContext(ThemeContext);
     const [place, setPlace] = useState();
-    const [formData, setFormData] = useState([]);
-    const [error, setError] = useState(false); // Error state for days input
+    const [formData, setFormData] = useState({});
+    const [errors, setErrors] = useState({});
 
     const handleInputChange = (name, value) => {
         setFormData({
@@ -18,23 +18,27 @@ function CreateTrip() {
         });
     };
 
-    // useEffect(() => {
-    //     console.log("FormData: ", formData);
-    // }, [formData]);
-
     const handlePlanMyTrip = () => {
-        // Check if number of days exceeds the limit
-        if (formData?.numOfDays > 15) {
-            console.error("Your trip duration should be 15 days or shorter.");
-            toast.error("Your trip duration should be 15 days or shorter.");
-            setError(true); // Set error state to true
+        let formErrors = {};
+
+        // Validate each field
+        if (!formData?.location) formErrors.location = "Destination is required.";
+        if (!formData?.numOfDays) formErrors.numOfDays = "Number of days is required.";
+        if (formData?.numOfDays > 15) formErrors.numOfDays = "Your trip duration should be 15 days or shorter.";
+        if (!formData?.budget) formErrors.budget = "Budget is required.";
+        if (!formData?.traveler) formErrors.traveler = "Traveler count is required.";
+
+        if (Object.keys(formErrors).length > 0) {
+            setErrors(formErrors);
+            toast.error("Please fill in all required fields.");
             window.scrollTo({
                 top: 0,
-                behavior: 'smooth', // Smooth scrolling
+                behavior: 'smooth',
             });
         } else {
-            setError(false); // Clear error if validation passes
+            setErrors({});
             console.log(formData);
+            // Handle form submission or further logic here
         }
     };
 
@@ -56,17 +60,18 @@ function CreateTrip() {
                             onChange: (value) => {
                                 setPlace(value);
                                 handleInputChange("location", value);
+                                setErrors((prev) => ({ ...prev, location: "" })); // Clear error on change
                             },
                             styles: {
                                 control: (baseStyles) => ({
                                     ...baseStyles,
                                     backgroundColor: darkMode ? "#353548" : "#fff",
                                     color: darkMode ? "#fff" : "#000",
-                                    borderColor: darkMode ? "#555" : "#ccc",
+                                    borderColor: errors.location ? 'red' : (darkMode ? "#555" : "#ccc"), // Apply red border on error
                                 }),
                                 input: (baseStyles) => ({
                                     ...baseStyles,
-                                    color: darkMode ? "#fff" : "#000", // Text color for user input
+                                    color: darkMode ? "#fff" : "#000",
                                 }),
                                 singleValue: (baseStyles) => ({
                                     ...baseStyles,
@@ -88,21 +93,20 @@ function CreateTrip() {
                             },
                         }}
                     />
+                    {errors.location && <p className="text-red-500">{errors.location}</p>}
                 </div>
                 <div>
                     <h2 className="font-bold pb-3 text-lg">How Many Days you are planning for trip?</h2>
                     <Input
                         placeholder="Ex. 3"
                         type="number"
-                        className={`w-[30%] px-4 py-2 rounded-md border ${darkMode ? "bg-[#353548] text-white border-[#555]" : "bg-white text-black border-[#ccc]"} ${error ? "border-red-500" : ""}`} // Conditionally apply the red border
+                        className={`w-[30%] px-4 py-2 rounded-md border ${darkMode ? "bg-[#353548] text-white border-[#555]" : "bg-white text-black border-[#ccc]"} ${errors.numOfDays ? "border-red-500" : ""}`}
                         onChange={(e) => {
-                            handleInputChange("numOfDays", e.target.value)
-                            setError(false) 
-                        }
-
-                        }
+                            handleInputChange("numOfDays", e.target.value);
+                            setErrors((prev) => ({ ...prev, numOfDays: "" }));
+                        }}
                     />
-                    {error ? <p className="text-red-500">Your trip duration should be 15 days or shorter.</p> : ""}
+                    {errors.numOfDays && <p className="text-red-500">{errors.numOfDays}</p>}
                 </div>
                 <div className="pt-7">
                     <h2 className="font-bold pb-3 text-lg">What is your budget?</h2>
@@ -113,9 +117,12 @@ function CreateTrip() {
                                 key={index}
                                 className={`p-4 border rounded-lg transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer 
                                     ${darkMode ? "bg-[#1e1e2e] border-gray-700 text-white" : "bg-white border-gray-300 text-black"}
-                                    ${formData?.budget === option.title && `text-whitebg-red-500 scale-[105%] shadow-md ${darkMode ? "shadow-[#464646] bg-[#6200ea] border-[#6200ea]" : "shadow-black bg-[#7735F7] border-[#030203]" }`}
-                                `}
-                                onClick={() => handleInputChange("budget", option.title)}
+                                    ${formData?.budget === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#7735F7]"}` : ""} 
+                                    ${errors.budget ? "border-red-500" : ""}`} // Red border on error
+                                onClick={() => {
+                                    handleInputChange("budget", option.title);
+                                    setErrors((prev) => ({ ...prev, budget: "" })); // Clear error on selecting option
+                                }}
                             >
                                 <div className="text-4xl mb-3">{option.icon}</div>
                                 <h2 className="text-xl font-bold mb-2">{option.title}</h2>
@@ -123,6 +130,7 @@ function CreateTrip() {
                             </div>
                         ))}
                     </div>
+                    {errors.budget && <p className="text-red-500">{errors.budget}</p>}
                 </div>
                 <div className="pt-7">
                     <h2 className="font-bold pb-3 text-lg">How many travelers?</h2>
@@ -133,9 +141,12 @@ function CreateTrip() {
                                 key={index}
                                 className={`p-4 border rounded-lg transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer 
                                     ${darkMode ? "bg-[#1e1e2e] border-gray-700 text-white" : "bg-white border-gray-300 text-black"}
-                                    ${formData?.traveler === option.title && `text-whitebg-red-500 scale-[105%] shadow-md ${darkMode ? "shadow-[#464646] bg-[#6200ea] border-[#6200ea]" : "shadow-black bg-[#7735F7] border-[#030203]" }`}
-                                `}
-                                onClick={() => handleInputChange("traveler", option.title)}
+                                    ${formData?.traveler === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#7735F7]"}` : ""} 
+                                    ${errors.traveler ? "border-red-500" : ""}`} // Red border on error
+                                onClick={() => {
+                                    handleInputChange("traveler", option.title);
+                                    setErrors((prev) => ({ ...prev, traveler: "" })); // Clear error on selecting option
+                                }}
                             >
                                 <h2 className="text-4xl mb-3">{option.icon}</h2>
                                 <h2 className="text-xl font-bold mb-2">{option.title}</h2>
@@ -143,6 +154,7 @@ function CreateTrip() {
                             </div>
                         ))}
                     </div>
+                    {errors.traveler && <p className="text-red-500">{errors.traveler}</p>}
                 </div>
                 <div className="flex justify-end">
                     <button
