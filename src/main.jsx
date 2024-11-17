@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CreateTrip from "./pages/createTrip/CreateTrip";
 import Header from "./components/custom/Header";
 import ThemeContext from "./context/ThemeContext";
+import { Toaster } from "react-hot-toast";
 
 const router = createBrowserRouter([
   {
@@ -39,5 +40,6 @@ function MainApp() {
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <MainApp />
+    <Toaster position="top-right" />
   </StrictMode>
 );
