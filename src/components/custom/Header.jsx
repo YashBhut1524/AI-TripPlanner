@@ -21,13 +21,13 @@ function Header() {
 
             {/* Right Section */}
             <div className="flex items-center sm:justify-end md:justify-end lg:justify-center xl:justify-center sm:w-full lg:w-auto sm:flex-row md:flex-row sm:gap-6 lg:gap-5">
+                <ThemeIcon />
                 <Button
                     className={`rounded-md font-medium bg-[#5e17eb] text-white hover:bg-[#7735f7] 
                     sm:px-3 sm:py-2 sm:text-sm md:px-3 md:py-2 md:text-base lg:px-5 lg:py-3 lg:text-lg`}
                 >
                     Sign In
                 </Button>
-                <ThemeIcon />
             </div>
         </div>
     );

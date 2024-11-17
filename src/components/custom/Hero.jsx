@@ -7,7 +7,7 @@ function Hero() {
 
     return (
         <div
-            className={`flex flex-col items-center justify-center h-screen text-center px-6 sm:px-12 md:px-20 lg:px-56
+            className={`flex flex-col items-center justify-center h-full text-center px-6 sm:px-12 md:px-20 lg:px-56
                 ${darkMode ? "bg-[#0d0d1a] text-white" : "bg-[#f9f9f9] text-gray-800"}
             `}
         >
