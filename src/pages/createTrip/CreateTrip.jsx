@@ -3,21 +3,60 @@ import { Input } from "@/components/ui/input";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import toast from "react-hot-toast";
 import ThemeContext from "@/context/ThemeContext";
+import AuthContext from "@/context/AuthContext"; // Import AuthContext
 import { AI_PROMPT, SelectBudgetOptions, SelectTravelerList } from "@/constans/options.js";
 import { chatSession } from "@/service/AIModel";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+} from "@/components/ui/dialog";
+import Logo from "@/components/animations/animationFile/Logo";
+import { Button } from "@/components/ui/button";
+import { FcGoogle } from "react-icons/fc";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
 function CreateTrip() {
-    const { darkMode } = useContext(ThemeContext);
-    const [place, setPlace] = useState();
+    const { darkMode } = useContext(ThemeContext); // Access theme context
+    const { user, loginUser } = useContext(AuthContext); // Access user and loginUser from AuthContext
+    const [place, setPlace] = useState(null);
     const [formData, setFormData] = useState({});
     const [errors, setErrors] = useState({});
+    const [openDialog, setOpenDialog] = useState(false);
 
     const handleInputChange = (name, value) => {
         setFormData({
             ...formData,
-            [name]: value
+            [name]: value,
         });
     };
+
+    const getUserProfile = async (tokenResponse) => {
+        try {
+            const response = await axios.get(
+                "https://www.googleapis.com/oauth2/v1/userinfo?alt=json",
+                {
+                    headers: {
+                        Authorization: `Bearer ${tokenResponse.access_token}`,
+                        Accept: "application/json",
+                    },
+                }
+            );
+            loginUser(response.data); // Update global user state
+            setOpenDialog(false);
+            toast.success("Successfully logged in!");
+        } catch (error) {
+            console.error("Error fetching user profile:", error);
+            toast.error("Failed to fetch user profile.");
+        }
+    };
+
+    const login = useGoogleLogin({
+        onSuccess: getUserProfile,
+        onError: (error) => toast.error("Login failed: ", error),
+    });
 
     const handlePlanMyTrip = async () => {
         let formErrors = {};
@@ -34,21 +73,34 @@ function CreateTrip() {
             toast.error("Please fill in all required fields.");
             window.scrollTo({
                 top: 0,
-                behavior: 'smooth',
+                behavior: "smooth",
             });
+            return;
         } else {
             setErrors({});
-            console.log(formData);
+        }
 
-            const FINAL_PROMPT = AI_PROMPT
-                .replace("{location}", formData?.location.label)
-                .replace("{numOfDays}", formData?.numOfDays)
-                .replace("{traveler}", formData?.traveler)
-                .replace("{budget}", formData?.budget)
-            console.log(FINAL_PROMPT);
-            
-            const result = await chatSession.sendMessage(FINAL_PROMPT)
-            console.log(result?.response?.text());
+        // Check if user is logged in
+        if (!user) {
+            setOpenDialog(true);
+            return;
+        }
+
+        // Prepare AI Prompt
+        const FINAL_PROMPT = AI_PROMPT
+            .replace("{location}", formData?.location?.label)
+            .replace("{numOfDays}", formData?.numOfDays)
+            .replace("{traveler}", formData?.traveler)
+            .replace("{budget}", formData?.budget);
+
+        console.log("FINAL_PROMPT:", FINAL_PROMPT);
+
+        try {
+            const result = await chatSession.sendMessage(FINAL_PROMPT);
+            console.log("AI Response:", result?.response?.text());
+        } catch (error) {
+            console.error("Error communicating with AI:", error);
+            toast.error("Failed to generate your trip. Please try again.");
         }
     };
 
@@ -127,7 +179,7 @@ function CreateTrip() {
                                 key={index}
                                 className={`p-4 border rounded-lg transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer 
                                     ${darkMode ? "bg-[#1e1e2e] border-gray-700 text-white" : "bg-white border-gray-300 text-black"}
-                                    ${formData?.budget === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#7735F7]"}` : ""} 
+                                    ${formData?.budget === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#7742e1]"}` : ""} 
                                     ${errors.budget ? "border-red-500" : ""}`} // Red border on error
                                 onClick={() => {
                                     handleInputChange("budget", option.title);
@@ -151,7 +203,7 @@ function CreateTrip() {
                                 key={index}
                                 className={`p-4 border rounded-lg transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer 
                                     ${darkMode ? "bg-[#1e1e2e] border-gray-700 text-white" : "bg-white border-gray-300 text-black"}
-                                    ${formData?.traveler === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#7735F7]"}` : ""} 
+                                    ${formData?.traveler === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#7742e1]"}` : ""} 
                                     ${errors.traveler ? "border-red-500" : ""}`} // Red border on error
                                 onClick={() => {
                                     handleInputChange("traveler", option.title);
@@ -174,6 +226,39 @@ function CreateTrip() {
                         Plan My Trip
                     </button>
                 </div>
+                <Dialog open={openDialog} onOpenChange={(isOpen) => setOpenDialog(isOpen)}>
+                    <DialogContent>
+                        <DialogHeader>
+                            {/* Close Button */}
+                            <button
+                                className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                                onClick={() => setOpenDialog(false)}
+                                aria-label="Close"
+                            >
+
+                            </button>
+                            <DialogDescription>
+                                <div className="flex items-center gap-0">
+                                    <Logo />
+                                    <span
+                                        className={`tracking-tight xl:text-4xl lg:text-4xl md:text-3xl sm:text-2xl font-extrabold text-[#000]`}
+                                    >
+                                        TripVerse
+                                    </span>
+                                </div>
+                                <h2 className="font-extrabold text-xl mt-8">Sign In with Google</h2>
+                                <p>Sign in to the App with Google Authentication securely</p>
+                                <Button
+                                    onClick={login}
+                                    className="mt-10 w-full flex items-center gap-2"
+                                >
+                                    <FcGoogle className="h-7 w-7" />
+                                    <span>Sign In With Google</span>
+                                </Button>
+                            </DialogDescription>
+                        </DialogHeader>
+                    </DialogContent>
+                </Dialog>
             </div>
         </div>
     );

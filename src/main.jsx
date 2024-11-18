@@ -7,6 +7,8 @@ import CreateTrip from "./pages/createTrip/CreateTrip";
 import Header from "./components/custom/Header";
 import ThemeContext from "./context/ThemeContext";
 import { Toaster } from "react-hot-toast";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import { AuthProvider } from "./context/AuthContext";
 
 const router = createBrowserRouter([
   {
@@ -30,10 +32,14 @@ function MainApp() {
   }, [darkMode]);
 
   return (
-    <ThemeContext.Provider value={{ darkMode, setDarkMode }}>
-      <Header />
-      <RouterProvider router={router} />
-    </ThemeContext.Provider>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID}>
+      <AuthProvider >
+        <ThemeContext.Provider value={{ darkMode, setDarkMode }}>
+          <Header />
+          <RouterProvider router={router} />
+        </ThemeContext.Provider>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   );
 }
 
