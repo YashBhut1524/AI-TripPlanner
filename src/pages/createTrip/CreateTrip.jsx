@@ -3,7 +3,8 @@ import { Input } from "@/components/ui/input";
 import GooglePlacesAutocomplete from "react-google-places-autocomplete";
 import toast from "react-hot-toast";
 import ThemeContext from "@/context/ThemeContext";
-import { SelectBudgetOptions, SelectTravelerList } from "@/constans/options.js";
+import { AI_PROMPT, SelectBudgetOptions, SelectTravelerList } from "@/constans/options.js";
+import { chatSession } from "@/service/AIModel";
 
 function CreateTrip() {
     const { darkMode } = useContext(ThemeContext);
@@ -18,7 +19,7 @@ function CreateTrip() {
         });
     };
 
-    const handlePlanMyTrip = () => {
+    const handlePlanMyTrip = async () => {
         let formErrors = {};
 
         // Validate each field
@@ -38,7 +39,16 @@ function CreateTrip() {
         } else {
             setErrors({});
             console.log(formData);
-            // Handle form submission or further logic here
+
+            const FINAL_PROMPT = AI_PROMPT
+                .replace("{location}", formData?.location.label)
+                .replace("{numOfDays}", formData?.numOfDays)
+                .replace("{traveler}", formData?.traveler)
+                .replace("{budget}", formData?.budget)
+            console.log(FINAL_PROMPT);
+            
+            const result = await chatSession.sendMessage(FINAL_PROMPT)
+            console.log(result?.response?.text());
         }
     };
 
