@@ -17,6 +17,9 @@ import { Button } from "@/components/ui/button";
 import { FcGoogle } from "react-icons/fc";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
+import { doc, setDoc } from "firebase/firestore"; 
+import { db } from "@/service/FireBaseConfig";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 function CreateTrip() {
     const { darkMode } = useContext(ThemeContext); // Access theme context
@@ -25,6 +28,7 @@ function CreateTrip() {
     const [formData, setFormData] = useState({});
     const [errors, setErrors] = useState({});
     const [openDialog, setOpenDialog] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleInputChange = (name, value) => {
         setFormData({
@@ -58,6 +62,27 @@ function CreateTrip() {
         onError: (error) => toast.error("Login failed: ", error),
     });
 
+    const SaveAITrip = async (TripData) => {
+        setLoading(true);
+        const user = JSON.parse(localStorage.getItem("user"));
+        const docId = Date.now().toString(); // Fix: Call the method
+        try {
+            await setDoc(doc(db, "Ai-Trips", docId), {
+                userPreferences: formData,
+                tripData: JSON.parse(TripData),
+                userEmail: user?.email,
+                id: docId,
+            });
+            toast.success("Trip saved successfully!");
+        } catch (error) {
+            console.error("Error saving trip:", error);
+            toast.error("Failed to save trip.");
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+
     const handlePlanMyTrip = async () => {
         let formErrors = {};
 
@@ -87,18 +112,21 @@ function CreateTrip() {
         }
 
         // Prepare AI Prompt
+        setLoading(true)
         const FINAL_PROMPT = AI_PROMPT
             .replace("{location}", formData?.location?.label)
             .replace("{numOfDays}", formData?.numOfDays)
             .replace("{traveler}", formData?.traveler)
             .replace("{budget}", formData?.budget);
-
-        console.log("FINAL_PROMPT:", FINAL_PROMPT);
+        // console.log("FINAL_PROMPT:", FINAL_PROMPT);
 
         try {
             const result = await chatSession.sendMessage(FINAL_PROMPT);
             console.log("AI Response:", result?.response?.text());
+            setLoading(false)
+            SaveAITrip(result?.response?.text())
         } catch (error) {
+            setLoading(false)
             console.error("Error communicating with AI:", error);
             toast.error("Failed to generate your trip. Please try again.");
         }
@@ -179,7 +207,7 @@ function CreateTrip() {
                                 key={index}
                                 className={`p-4 border rounded-lg transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer 
                                     ${darkMode ? "bg-[#1e1e2e] border-gray-700 text-white" : "bg-white border-gray-300 text-black"}
-                                    ${formData?.budget === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#7742e1]"}` : ""} 
+                                    ${formData?.budget === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#713ae0]"}` : ""} 
                                     ${errors.budget ? "border-red-500" : ""}`} // Red border on error
                                 onClick={() => {
                                     handleInputChange("budget", option.title);
@@ -203,7 +231,7 @@ function CreateTrip() {
                                 key={index}
                                 className={`p-4 border rounded-lg transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer 
                                     ${darkMode ? "bg-[#1e1e2e] border-gray-700 text-white" : "bg-white border-gray-300 text-black"}
-                                    ${formData?.traveler === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#7742e1]"}` : ""} 
+                                    ${formData?.traveler === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#713ae0]"}` : ""} 
                                     ${errors.traveler ? "border-red-500" : ""}`} // Red border on error
                                 onClick={() => {
                                     handleInputChange("traveler", option.title);
@@ -219,12 +247,18 @@ function CreateTrip() {
                     {errors.traveler && <p className="text-red-500">{errors.traveler}</p>}
                 </div>
                 <div className="flex justify-end">
-                    <button
+                    <Button
+                        disabled={loading}
                         className={`w-[50%] sm:w-[23%] md:w-[43%] lg:w-[20%] px-1 py-3 mt-10 mb-32 font-bold rounded-lg shadow-lg transition text-lg bg-[#6200ea] text-white hover:bg-[#4500a5]`}
                         onClick={handlePlanMyTrip}
                     >
-                        Plan My Trip
-                    </button>
+                        {loading 
+                            ? <AiOutlineLoading3Quarters className="h-10 w-10 animate-spin"/>
+                            : <>
+                                Plan My Trip    
+                            </>
+                        }
+                    </Button>
                 </div>
                 <Dialog open={openDialog} onOpenChange={(isOpen) => setOpenDialog(isOpen)}>
                     <DialogContent>
@@ -235,7 +269,6 @@ function CreateTrip() {
                                 onClick={() => setOpenDialog(false)}
                                 aria-label="Close"
                             >
-
                             </button>
                             <DialogDescription>
                                 <div className="flex items-center gap-0">
@@ -249,6 +282,7 @@ function CreateTrip() {
                                 <h2 className="font-extrabold text-xl mt-8">Sign In with Google</h2>
                                 <p>Sign in to the App with Google Authentication securely</p>
                                 <Button
+                                    disable={loading}
                                     onClick={login}
                                     className="mt-10 w-full flex items-center gap-2"
                                 >
