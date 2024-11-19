@@ -9,6 +9,9 @@ import ThemeContext from "./context/ThemeContext";
 import { Toaster } from "react-hot-toast";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from "./context/AuthContext";
+import ThemeIcon from "./components/custom/ThemeIcon";
+import UserProfile from "./components/custom/UserProfile";
+import { UserProfileProvider } from "./context/UserProfileContext";
 
 const router = createBrowserRouter([
   {
@@ -27,21 +30,26 @@ function MainApp() {
   });
 
   useEffect(() => {
-    // Update localStorage whenever darkMode changes
     localStorage.setItem("darkMode", JSON.stringify(darkMode));
   }, [darkMode]);
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_AUTH_CLIENT_ID}>
-      <AuthProvider >
+      <AuthProvider>
         <ThemeContext.Provider value={{ darkMode, setDarkMode }}>
-          <Header />
-          <RouterProvider router={router} />
+          <UserProfileProvider>
+            <Header />
+            <ThemeIcon />
+            <RouterProvider router={router} />
+            <UserProfile />
+          </UserProfileProvider>
         </ThemeContext.Provider>
       </AuthProvider>
     </GoogleOAuthProvider>
   );
 }
+
+
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

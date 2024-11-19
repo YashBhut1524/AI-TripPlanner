@@ -67,13 +67,25 @@ function CreateTrip() {
         const user = JSON.parse(localStorage.getItem("user"));
         const docId = Date.now().toString(); // Fix: Call the method
         try {
+            // Validate JSON
+            let parsedTripData;
+            try {
+                parsedTripData = JSON.parse(TripData); // Attempt to parse JSON
+            } catch (jsonError) {
+                console.error("Invalid JSON data from AI:", TripData, jsonError);
+                toast.error("Failed to parse AI trip data. Please try again.");
+                setLoading(false);
+                return; // Exit function if parsing fails
+            }
+    
+            // Save to Firestore
             await setDoc(doc(db, "Ai-Trips", docId), {
                 userPreferences: formData,
-                tripData: JSON.parse(TripData),
+                tripData: parsedTripData,
                 userEmail: user?.email,
                 id: docId,
             });
-            toast.success("Trip saved successfully!");
+            // toast.success("Trip saved successfully!");
         } catch (error) {
             console.error("Error saving trip:", error);
             toast.error("Failed to save trip.");
@@ -82,55 +94,64 @@ function CreateTrip() {
         }
     };
     
+    
 
     const handlePlanMyTrip = async () => {
-        let formErrors = {};
+    let formErrors = {};
 
-        // Validate each field
-        if (!formData?.location) formErrors.location = "Destination is required.";
-        if (!formData?.numOfDays) formErrors.numOfDays = "Number of days is required.";
-        if (formData?.numOfDays > 15) formErrors.numOfDays = "Your trip duration should be 15 days or shorter.";
-        if (!formData?.budget) formErrors.budget = "Budget is required.";
-        if (!formData?.traveler) formErrors.traveler = "Traveler count is required.";
+    // Validate each field
+    if (!formData?.location) formErrors.location = "Destination is required.";
+    if (!formData?.numOfDays) formErrors.numOfDays = "Number of days is required.";
+    if (formData?.numOfDays > 15) formErrors.numOfDays = "Your trip duration should be 15 days or shorter.";
+    if (!formData?.budget) formErrors.budget = "Budget is required.";
+    if (!formData?.traveler) formErrors.traveler = "Traveler count is required.";
 
-        if (Object.keys(formErrors).length > 0) {
-            setErrors(formErrors);
-            toast.error("Please fill in all required fields.");
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth",
-            });
-            return;
-        } else {
-            setErrors({});
-        }
+    if (Object.keys(formErrors).length > 0) {
+        setErrors(formErrors);
+        toast.error("Please fill in all required fields.");
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+        return;
+    } else {
+        setErrors({});
+    }
 
-        // Check if user is logged in
-        if (!user) {
-            setOpenDialog(true);
-            return;
-        }
+    // Check if user is logged in
+    if (!user) {
+        setOpenDialog(true);
+        return;
+    }
 
-        // Prepare AI Prompt
-        setLoading(true)
-        const FINAL_PROMPT = AI_PROMPT
-            .replace("{location}", formData?.location?.label)
-            .replace("{numOfDays}", formData?.numOfDays)
-            .replace("{traveler}", formData?.traveler)
-            .replace("{budget}", formData?.budget);
-        // console.log("FINAL_PROMPT:", FINAL_PROMPT);
+    // Prepare AI Prompt
+    setLoading(true);
+    const FINAL_PROMPT = AI_PROMPT
+        .replace("{location}", formData?.location?.label)
+        .replace("{numOfDays}", formData?.numOfDays)
+        .replace("{traveler}", formData?.traveler)
+        .replace("{budget}", formData?.budget);
 
-        try {
-            const result = await chatSession.sendMessage(FINAL_PROMPT);
-            console.log("AI Response:", result?.response?.text());
-            setLoading(false)
-            SaveAITrip(result?.response?.text())
-        } catch (error) {
-            setLoading(false)
-            console.error("Error communicating with AI:", error);
-            toast.error("Failed to generate your trip. Please try again.");
-        }
-    };
+    try {
+        const result = await chatSession.sendMessage(FINAL_PROMPT);
+        // console.log("AI Response:", result?.response?.text());
+
+        // Save trip
+        await SaveAITrip(result?.response?.text());
+
+        // Clear the form and reset errors
+        setFormData({});
+        setPlace(null);
+        setErrors({});
+        toast.success("Trip planned successfully!");
+    } catch (error) {
+        console.error("Error communicating with AI:", error);
+        toast.error("Failed to generate your trip. Please try again.");
+    } finally {
+        setLoading(false);
+    }
+};
+
 
     return (
         <div
@@ -207,7 +228,7 @@ function CreateTrip() {
                                 key={index}
                                 className={`p-4 border rounded-lg transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer 
                                     ${darkMode ? "bg-[#1e1e2e] border-gray-700 text-white" : "bg-white border-gray-300 text-black"}
-                                    ${formData?.budget === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#713ae0]"}` : ""} 
+                                    ${formData?.budget === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#713ae1]"}` : ""} 
                                     ${errors.budget ? "border-red-500" : ""}`} // Red border on error
                                 onClick={() => {
                                     handleInputChange("budget", option.title);
@@ -231,7 +252,7 @@ function CreateTrip() {
                                 key={index}
                                 className={`p-4 border rounded-lg transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer 
                                     ${darkMode ? "bg-[#1e1e2e] border-gray-700 text-white" : "bg-white border-gray-300 text-black"}
-                                    ${formData?.traveler === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#713ae0]"}` : ""} 
+                                    ${formData?.traveler === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#713ae1]"}` : ""} 
                                     ${errors.traveler ? "border-red-500" : ""}`} // Red border on error
                                 onClick={() => {
                                     handleInputChange("traveler", option.title);
