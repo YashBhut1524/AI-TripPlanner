@@ -9,9 +9,10 @@ import ThemeContext from "./context/ThemeContext";
 import { Toaster } from "react-hot-toast";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AuthProvider } from "./context/AuthContext";
-import ThemeIcon from "./components/custom/ThemeIcon";
 import UserProfile from "./components/custom/UserProfile";
 import { UserProfileProvider } from "./context/UserProfileContext";
+import ViewTrip from "./pages/viewTrip/ViewTrip";
+import ThemeIcon from "./components/custom/ThemeIcon";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
     path: "/create-trip",
     element: <CreateTrip />,
   },
+  {
+    path: "/view-trip/:tripId",
+    element: <ViewTrip />
+  }
 ]);
 
 function MainApp() {
@@ -39,7 +44,9 @@ function MainApp() {
         <ThemeContext.Provider value={{ darkMode, setDarkMode }}>
           <UserProfileProvider>
             <Header />
-            <ThemeIcon />
+            <div className={`px-6 ${darkMode ? "bg-[#0d0d1a] text-white" : "bg-[#f9f9f9] text-gray-800"}`}>
+              <ThemeIcon />
+            </div>
             <RouterProvider router={router} />
             <UserProfile />
           </UserProfileProvider>

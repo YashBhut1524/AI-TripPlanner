@@ -20,6 +20,7 @@ import axios from "axios";
 import { doc, setDoc } from "firebase/firestore"; 
 import { db } from "@/service/FireBaseConfig";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 
 function CreateTrip() {
     const { darkMode } = useContext(ThemeContext); // Access theme context
@@ -29,6 +30,8 @@ function CreateTrip() {
     const [errors, setErrors] = useState({});
     const [openDialog, setOpenDialog] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate()
 
     const handleInputChange = (name, value) => {
         setFormData({
@@ -65,15 +68,16 @@ function CreateTrip() {
     const SaveAITrip = async (TripData) => {
         setLoading(true);
         const user = JSON.parse(localStorage.getItem("user"));
-        const docId = Date.now().toString(); // Fix: Call the method
+        const docId = Date.now().toString(); // Generate a unique document ID
+    
         try {
-            // Validate JSON
+            // Attempt to parse TripData to validate JSON format
             let parsedTripData;
             try {
-                parsedTripData = JSON.parse(TripData); // Attempt to parse JSON
+                parsedTripData = JSON.parse(TripData); // Parse TripData
             } catch (jsonError) {
                 console.error("Invalid JSON data from AI:", TripData, jsonError);
-                toast.error("Failed to parse AI trip data. Please try again.");
+                toast.error("Failed to parse AI trip data. Please check the format and try again.");
                 setLoading(false);
                 return; // Exit function if parsing fails
             }
@@ -81,20 +85,20 @@ function CreateTrip() {
             // Save to Firestore
             await setDoc(doc(db, "Ai-Trips", docId), {
                 userPreferences: formData,
-                tripData: parsedTripData,
+                tripData: parsedTripData, // Use parsed JSON data
                 userEmail: user?.email,
                 id: docId,
             });
-            // toast.success("Trip saved successfully!");
+    
+            toast.success("Trip saved successfully!");
+            navigate(`/view-trip/${docId}`)
         } catch (error) {
             console.error("Error saving trip:", error);
-            toast.error("Failed to save trip.");
+            toast.error("Failed to save trip. Please try again.");
         } finally {
             setLoading(false);
         }
     };
-    
-    
 
     const handlePlanMyTrip = async () => {
     let formErrors = {};
@@ -154,8 +158,9 @@ function CreateTrip() {
 
 
     return (
+        <>
         <div
-            className={`overflow-y-hidden sm:px-10 md:px-32 lg:px-56 xl:px-56 px-5 pt-10 ${darkMode ? "bg-[#0d0d1a] text-white" : "bg-[#f9f9f9] text-gray-800"}`}
+        className={`overflow-y-hidden sm:px-10 md:px-32 lg:px-56 xl:px-56 px-5 pt-10 ${darkMode ? "bg-[#0d0d1a] text-white" : "bg-[#f9f9f9] text-gray-800"}`}
         >
             <h2 className="text-3xl font-bold">Create Your Perfect Journey.🏕️</h2>
             <p className={`mt-4 text-lg ${darkMode ? "text-[#FFFF]" : "text-[#333333]"}`}>
@@ -209,6 +214,8 @@ function CreateTrip() {
                 <div>
                     <h2 className="font-bold pb-3 text-lg">How Many Days you are planning for trip?</h2>
                     <Input
+                        min="1"
+                        max="2"
                         placeholder="Ex. 3"
                         type="number"
                         className={`w-[30%] px-4 py-2 rounded-md border ${darkMode ? "bg-[#353548] text-white border-[#555]" : "bg-white text-black border-[#ccc]"} ${errors.numOfDays ? "border-red-500" : ""}`}
@@ -246,7 +253,7 @@ function CreateTrip() {
                 <div className="pt-7">
                     <h2 className="font-bold pb-3 text-lg">How many travelers?</h2>
                     <p>Tell us your group size, and we’ll take care of the rest!</p>
-                    <div className="py-0 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 mt-5">
+                    <div className="py-0 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-5 mt-5">
                         {SelectTravelerList.map((option, index) => (
                             <div
                                 key={index}
@@ -316,6 +323,7 @@ function CreateTrip() {
                 </Dialog>
             </div>
         </div>
+        </>
     );
 }
 

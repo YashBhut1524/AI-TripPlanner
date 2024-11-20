@@ -28,7 +28,7 @@ const UserProfile = () => {
             {/* User Profile Card */}
             <div
                 className={`relative p-8 rounded-lg shadow-lg z-50 w-full max-w-md
-          ${darkMode ? "bg-[#1e1e2e] text-gray-100" : "bg-gray-100 text-gray-900"}
+            ${darkMode ? "bg-[#1e1e2e] text-gray-100" : "bg-gray-100 text-gray-900"}
         `}
             >
                 {/* Close Button */}
