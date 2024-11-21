@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import ThemeContext from "@/context/ThemeContext";
-import { useContext } from "react";
-import TimeToTravel from "@/images/TimeToTravel.jpg";
+import { useContext} from "react";
 import {
     Carousel,
     CarouselContent,
@@ -9,14 +8,15 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Button } from "@/components/ui/button";
-import { FaMapLocationDot } from "react-icons/fa6";
+import Activity from "./Activity.jsx";
 
 function Itinerary({ trip }) {
     const { darkMode } = useContext(ThemeContext); // Access theme context
-
+    // console.log(trip);
+    
     const itinerary = trip?.tripData?.itinerary;
-
+    // console.log(itinerary);
+    
     if (!itinerary) {
         return (
             <div
@@ -57,26 +57,9 @@ function Itinerary({ trip }) {
                                                     : "bg-[#d6d4d4] text-[#000] hover:bg-[#928d9c]"
                                                 } rounded-lg p-6 ml-4 shadow-md hover:shadow-lg transition-all lg:basis-1/2 xl:basis-1/2 flex flex-col items-start justify-center `}
                                         >
-                                            <img
-                                                src={TimeToTravel}
-                                                alt="Travel"
-                                                className="w-[100vw] h-[30vh] object-cover rounded-lg mb-4"
-                                            />
                                             <div>
-                                                <h3 className="font-semibold text-xl mb-2">{item.placeName}</h3>
-                                                <p className="text-sm mb-1">{item.placeDetails}</p>
-                                                <p className="text-sm"><span className="font-bold text-md">Best Time To Visit: </span>{item.bestTimetoVisit}</p>
-                                                <p className="text-sm"><span className="font-bold text-md">Tickets: </span>{item.ticketPricing}</p>
-                                                <p className="text-sm"><span className="font-bold text-md">Travel Time: </span>{item.travelTime}</p>
-                                                <Button className='mt-5'>
-                                                    <a
-                                                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.placeName)},${encodeURIComponent(item.placeAddress)}`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer" // Adds security by preventing the new tab from accessing the original window's context
-                                                    >
-                                                        <FaMapLocationDot />
-                                                    </a>
-                                                </Button>
+                                                <Activity activity={item} trip={trip}/>
+                                                
                                             </div>
                                         </CarouselItem>
                                     ))}

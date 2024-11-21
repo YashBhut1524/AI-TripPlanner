@@ -2,11 +2,9 @@
 /* eslint-disable react/prop-types */
 import { Button } from "@/components/ui/button"
 import ThemeContext from "@/context/ThemeContext"
-import { GetPlaceDetails } from "@/service/GlobalApi";
+import { GetPlaceDetails, PHOTO_REF_URL } from "@/service/GlobalApi";
 import { useContext, useEffect, useState } from "react"
 import { IoShareSocialSharp } from "react-icons/io5";
-
-const PHOTO_REF_URL = "https://places.googleapis.com/v1/{NAME}/media?maxHeightPx=1000&maxWidthPx=1000&key="+import.meta.env.VITE_GOOGLE_PLACE_KEY;
 
 function InfoSection({ trip }) {
 
@@ -18,32 +16,30 @@ function InfoSection({ trip }) {
     }, [trip])
 
     const getPlacePhoto = async () => {
-    const data = {
-        textQuery: trip?.userPreferences?.location?.label, // Correctly pass the location
-    };
+        const data = {
+            textQuery: trip?.userPreferences?.location?.label, // Correctly pass the location
+        };
 
-    try {
-        const result = await GetPlaceDetails(data);
-        let photoURL = null;
+        try {
+            const result = await GetPlaceDetails(data);
+            let photoURL = null;
 
-        // Loop to find a valid photo URL, starting from index 1, up to index 9
-        for (let i = 1; i <= 9; i++) {
-            const photo = result?.places[0]?.photos[i];
-            if (photo) {
-                photoURL = PHOTO_REF_URL.replace("{NAME}", photo.name);
-                break;
+            // Loop to find a valid photo URL, starting from index 1, up to index 9
+            for (let i = 1; i <= 9; i++) {
+                const photo = result?.places[0]?.photos[i];
+                if (photo) {
+                    photoURL = PHOTO_REF_URL.replace("{NAME}", photo.name);
+                    break;
+                }
             }
+
+            // If a valid photo is found, set it, else fall back to a default image
+            setPhoto(photoURL || "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png");
+        } catch (error) {
+            console.error("Error fetching place details: ", error);
+            setPhoto("https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png"); // Default image in case of an error
         }
-
-        // If a valid photo is found, set it, else fall back to a default image
-        setPhoto(photoURL || "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png");
-    } catch (error) {
-        console.error("Error fetching place details: ", error);
-        setPhoto("https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png"); // Default image in case of an error
-    }
-};
-
-
+    };
 
     return (
         <div>

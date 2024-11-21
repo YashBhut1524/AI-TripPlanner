@@ -106,7 +106,7 @@ function CreateTrip() {
     // Validate each field
     if (!formData?.location) formErrors.location = "Destination is required.";
     if (!formData?.numOfDays) formErrors.numOfDays = "Number of days is required.";
-    if (formData?.numOfDays > 15) formErrors.numOfDays = "Your trip duration should be 15 days or shorter.";
+    if (formData?.numOfDays > 10) formErrors.numOfDays = "Your trip duration should be 10 days or shorter.";
     if (!formData?.budget) formErrors.budget = "Budget is required.";
     if (!formData?.traveler) formErrors.traveler = "Traveler count is required.";
 
@@ -259,7 +259,7 @@ function CreateTrip() {
                                 key={index}
                                 className={`p-4 border rounded-lg transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer 
                                     ${darkMode ? "bg-[#1e1e2e] border-gray-700 text-white" : "bg-white border-gray-300 text-black"}
-                                    ${formData?.traveler === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#713ae2]"}` : ""} 
+                                    ${formData?.traveler === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#713ae3]"}` : ""} 
                                     ${errors.traveler ? "border-red-500" : ""}`} // Red border on error
                                 onClick={() => {
                                     handleInputChange("traveler", option.title);
