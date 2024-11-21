@@ -55,7 +55,7 @@ function Itinerary({ trip }) {
                                             className={`pl-4 w-[30vw] ${darkMode
                                                     ? "bg-[#282840] text-white hover:bg-[#713ae1] hover:text-[#ffff]"
                                                     : "bg-[#d6d4d4] text-[#000] hover:bg-[#928d9c]"
-                                                } rounded-lg p-6 ml-4 shadow-md hover:shadow-lg transition-all lg:basis-1/2 xl:basis-1/2 flex flex-col items-start justify-center `}
+                                                } rounded-lg p-6 ml-4 shadow-md hover:shadow-lg transition-all lg:basis-1/2 xl:basis-1/2 flex flex-col items-start justify-center select-none`}
                                         >
                                             <div>
                                                 <Activity activity={item} trip={trip}/>
