@@ -13,6 +13,7 @@ import UserProfile from "./components/custom/UserProfile";
 import { UserProfileProvider } from "./context/UserProfileContext";
 import ViewTrip from "./pages/viewTrip/ViewTrip";
 import ThemeIcon from "./components/custom/ThemeIcon";
+import Footer from "./components/custom/Footer";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,8 @@ function MainApp() {
             </div>
             <RouterProvider router={router} />
             <UserProfile />
+            {/* Footer */}
+            <Footer />
           </UserProfileProvider>
         </ThemeContext.Provider>
       </AuthProvider>

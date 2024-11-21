@@ -38,10 +38,10 @@ function InfoSection({ trip }) {
                     </div>
                 </div>
                 <Button
-  className={`flex items-center justify-center p-2 text-sm md:p-3 md:text-base lg:p-4 lg:text-lg rounded-full transition-transform transform hover:scale-105 ${darkMode ? "bg-[#353548] text-white" : "bg-[#000000] text-white"}`}
->
-  <IoShareSocialSharp className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
-</Button>
+                    className={`flex items-center justify-center p-2 text-sm md:p-3 md:text-base lg:p-4 lg:text-lg rounded-full transition-transform transform hover:scale-105 ${darkMode ? "bg-[#353548] text-white" : "bg-[#000000] text-white"}`}
+                >
+                    <IoShareSocialSharp className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
+                </Button>
             </div>
         </div>
     )

@@ -4,7 +4,7 @@ import ThemeContext from "@/context/ThemeContext";
 import { useContext } from "react";
 import AuthContext from "@/context/AuthContext";
 import toast from "react-hot-toast";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback} from "@/components/ui/avatar";
 import { useUserProfile } from "@/context/UserProfileContext";
 import { useGoogleLogin } from "@react-oauth/google"; // Import Google Login
 import axios from "axios"; // Import Axios for API requests
@@ -39,7 +39,8 @@ function Header() {
         onSuccess: getUserProfile,
         onError: (error) => toast.error("Login failed: ", error),
     });
-
+    console.log(user?.picture);
+    
     return (
         <div
             className={`top-0 left-0 w-full shadow-md flex items-center justify-between sm:gap-5 px-6 py-4 border-b-2
@@ -54,9 +55,9 @@ function Header() {
                         {/* Avatar with Profile Button */}
                         <button onClick={() => setShowUserProfile(true)}>
                             <Avatar>
-                                <AvatarImage src={user.picture} />
+                                <img src={user?.picture} />
                                 <AvatarFallback className={`bg-[#5e17eb] text-white`}>
-                                    {user.name[0]}
+                                    {user?.name[0]}
                                 </AvatarFallback>
                             </Avatar>
                         </button>
