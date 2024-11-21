@@ -39,7 +39,7 @@ function Header() {
         onSuccess: getUserProfile,
         onError: (error) => toast.error("Login failed: ", error),
     });
-    console.log(user?.picture);
+    // console.log(user?.picture);
     
     return (
         <div

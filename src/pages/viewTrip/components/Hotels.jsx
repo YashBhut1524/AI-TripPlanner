@@ -1,7 +1,7 @@
+/* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable react/prop-types */
 import ThemeContext from "@/context/ThemeContext";
-import TimeToTravel from "@/images/TimeToTravel.jpg";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
     Carousel,
     CarouselContent,
@@ -21,10 +21,51 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import map from "@/images/map.png";
+import { GetPlaceDetails, PHOTO_REF_URL } from "@/service/GlobalApi";
+import "./style.css"
+
 
 function Hotels({ trip }) {
     const { darkMode } = useContext(ThemeContext);
     const [selectedHotel, setSelectedHotel] = useState(null);
+    const [hotelPhotos, setHotelPhotos] = useState({});  // Track photos for each hotel
+
+    useEffect(() => {
+        if (trip && trip?.tripData?.hotels) {
+            getPlacePhotos();
+        }
+        window.scrollTo(0, 0);
+
+    }, [trip]);
+
+    const getPlacePhotos = async () => {
+        const hotelPhotosObj = {};
+    
+        for (const hotel of trip?.tripData?.hotels) {
+            const data = { textQuery: `${hotel.hotelName},${hotel.hotelAddress}` }; // Pass hotel name for each
+            try {
+                const result = await GetPlaceDetails(data);
+                let photoURL = null;
+    
+                // Loop to find a valid photo URL, starting from index 1, up to index 9
+                for (let i = 0; i <= 9; i++) {
+                    const photo = result?.places[0]?.photos[i];
+                    if (photo) {
+                        photoURL = PHOTO_REF_URL.replace("{NAME}", photo.name);
+                        break;
+                    }
+                }
+    
+                hotelPhotosObj[hotel.hotelName] = photoURL || "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png"; // Default image if no valid photo is found
+            } catch (error) {
+                console.error("Error fetching place details: ", error);
+                hotelPhotosObj[hotel.hotelName] = "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png"; // Default image in case of an error
+            }
+        }
+    
+        setHotelPhotos(hotelPhotosObj);
+    };
+    
 
     const dialogStyles = darkMode
         ? "bg-[#0d0d1a] text-white border-gray-700"
@@ -51,7 +92,7 @@ function Hotels({ trip }) {
                                             {/* Hotel Image */}
                                             <img
                                                 className={`w-full h-48 sm:h-56 md:h-64 lg:h-72 object-cover transition-transform duration-300 group-hover:scale-110`}
-                                                src={TimeToTravel}
+                                                src={hotelPhotos[hotel.hotelName] || "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png"}  
                                                 alt={hotel.hotelName}
                                             />
                                             {/* Overlay */}
@@ -98,7 +139,7 @@ function Hotels({ trip }) {
                                             <a
                                                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hotel.hotelName)} ${encodeURIComponent(hotel.hotelAddress)}`}
                                                 target="_blank"
-                                                rel="noopener noreferrer" // Adds security by preventing the new tab from accessing the original window's context
+                                                rel="noopener noreferrer"
                                             >
                                                 <img
                                                     src={map}
@@ -113,7 +154,7 @@ function Hotels({ trip }) {
                                     <div className="-mt-4">
                                         <img
                                             className={`w-full h-48 sm:h-56 md:h-64 lg:h-72 object-contain rounded-lg`}
-                                            src={TimeToTravel}
+                                            src={hotelPhotos[selectedHotel?.hotelName]}
                                             alt={selectedHotel?.hotelName}
                                         />
                                         <p className="text-sm mt-4">

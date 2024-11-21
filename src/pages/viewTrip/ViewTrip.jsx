@@ -7,7 +7,6 @@ import { useParams, useNavigate } from 'react-router-dom'
 import InfoSection from './components/InfoSection'
 import Hotels from './components/Hotels'
 import Itinerary from './components/Itinerary'
-import Footer from '@/components/custom/Footer'
 
 function ViewTrip() {
     const { darkMode } = useContext(ThemeContext)
@@ -18,6 +17,9 @@ function ViewTrip() {
     const [loading, setLoading] = useState(true)
 
     const user = JSON.parse(localStorage.getItem("user"))
+    // console.log(user);
+    // console.log(trip?.userEmail);
+    
 
     useEffect(() => {
         if (tripId) {
@@ -91,7 +93,7 @@ function ViewTrip() {
         )
     }
 
-    if (trip?.tripData?.userEmail !== user?.email) {
+    if (trip?.userEmail !== user?.email) {
         return (
             <div
                 className={`flex flex-col justify-start items-center pt-10 pb-10 px-5 h-[40vh] ${darkMode ? "bg-[#0d0d1a] text-white" : "bg-[#f9f9f9] text-gray-800"
@@ -102,6 +104,15 @@ function ViewTrip() {
                     You are not authorized to view this trip. Please check your account or go back to the homepage.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
+                    <button
+                        className={`px-6 py-3 rounded-lg font-semibold ${darkMode
+                                ? "bg-[#5e17eb] text-white hover:bg-[#7735f7]"
+                                : "bg-[#6200ea] text-white hover:bg-[#4500a5]"
+                            }`}
+                        onClick={getTripData}
+                    >
+                        Retry
+                    </button>
                     <button
                         className={`px-6 py-3 rounded-lg font-semibold ${darkMode
                                 ? "bg-gray-600 text-white hover:bg-gray-500"
@@ -127,8 +138,6 @@ function ViewTrip() {
             <Hotels trip={trip} />
             {/* Itinerary */}
             <Itinerary trip={trip} />
-            {/* Footer */}
-            <Footer />
         </div>
     )
 }
