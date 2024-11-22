@@ -25,13 +25,15 @@ function InfoSection({ trip }) {
             let photoURL = null;
 
             // Loop to find a valid photo URL, starting from index 1, up to index 9
-            for (let i = 1; i <= 9; i++) {
-                const photo = result?.places[0]?.photos[i];
-                if (photo) {
-                    photoURL = PHOTO_REF_URL.replace("{NAME}", photo.name);
-                    break;
-                }
-            }
+            // for (let i = 1; i <= 9; i++) {
+            //     const photo = result?.places[0]?.photos[i];
+            //     if (photo) {
+            //         photoURL = PHOTO_REF_URL.replace("{NAME}", photo.name);
+            //         break;
+            //     }
+            // }
+                const photo = result?.places[0]?.photos[5];
+                photoURL = PHOTO_REF_URL.replace("{NAME}", photo.name);
 
             // If a valid photo is found, set it, else fall back to a default image
             setPhoto(photoURL || "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png");

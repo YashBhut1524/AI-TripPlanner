@@ -10,7 +10,7 @@ function Footer() {
             className={`py-8 px-6 border-t-2 
             ${darkMode ? "bg-[#0d0d1a] text-gray-300 border-[#23213c]" : "bg-[#f9f9f9] text-gray-800 border-[#dcdcdc]"}`}
         >
-            <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="container py-10 mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {/* Branding Section */}
                 <div>
                     <h2 className="text-xl font-bold">TripVerse</h2>
@@ -77,7 +77,7 @@ function Footer() {
             </div>
 
             {/* Footer Bottom */}
-            <div className="mt-8 text-center border-t pt-4 text-sm">
+            <div className="mt-8 text-center border-t pt-10 text-sm">
                 <p>
                     &copy; {new Date().getFullYear()} TripVerse. All rights reserved.
                 </p>

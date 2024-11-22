@@ -15,6 +15,7 @@ const UserProfile = () => {
         logoutUser();
         setShowUserProfile(false);
         toast.success("Successfully logged out!");
+        window.location.reload();
     };
 
     return (

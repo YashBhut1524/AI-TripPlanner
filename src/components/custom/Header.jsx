@@ -1,13 +1,15 @@
 import Logo from "@/components/animations/animationFile/Logo.jsx";
 import { Button } from "../ui/button";
 import ThemeContext from "@/context/ThemeContext";
-import { useContext } from "react";
+import { useContext} from "react";
 import AuthContext from "@/context/AuthContext";
 import toast from "react-hot-toast";
-import { Avatar, AvatarFallback} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useUserProfile } from "@/context/UserProfileContext";
 import { useGoogleLogin } from "@react-oauth/google"; // Import Google Login
 import axios from "axios"; // Import Axios for API requests
+import { AvatarImage } from "@radix-ui/react-avatar";
+
 
 function Header() {
     const { darkMode } = useContext(ThemeContext); // Access theme context
@@ -34,28 +36,36 @@ function Header() {
         }
     };
 
+
     // Initialize Google Login
     const login = useGoogleLogin({
         onSuccess: getUserProfile,
         onError: (error) => toast.error("Login failed: ", error),
     });
-    // console.log(user?.picture);
-    
+    console.log(user?.picture);
+
     return (
         <div
             className={`top-0 left-0 w-full shadow-md flex items-center justify-between sm:gap-5 px-6 py-4 border-b-2
         ${darkMode ? "bg-[#0d0d1a] border-[#23213c] text-gray-300" : "bg-[#f9f9f9] border-[#dcdcdc] text-gray-800"}`}
         >
             <div className="flex justify-center">
-                <Logo msg={"TripVerse"} />
+                <a href="/">
+                    <Logo msg={"TripVerse"} />
+                </a>
             </div>
             <div className="flex items-center gap-6">
                 {user ? (
                     <div className="flex items-center gap-3 px-10">
                         {/* Avatar with Profile Button */}
+                        <a href="/my-trips">
+                            <Button variant="outline" className={`rounded-full border-[#5e17eb] bg-[#5e17eb] text-white hover:bg-[#7735f7] hover:text-[#ffff]`}>
+                                My Trips
+                            </Button>
+                        </a>
                         <button onClick={() => setShowUserProfile(true)}>
                             <Avatar>
-                                <img src={user?.picture} />
+                                <AvatarImage src={user?.picture} />
                                 <AvatarFallback className={`bg-[#5e17eb] text-white`}>
                                     {user?.name[0]}
                                 </AvatarFallback>

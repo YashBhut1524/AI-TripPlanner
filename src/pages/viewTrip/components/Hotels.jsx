@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import map from "@/images/map.png";
 import { GetPlaceDetails, PHOTO_REF_URL } from "@/service/GlobalApi";
 import "./style.css"
-
+import TimeToTravel from "@/images/TimeToTravel.jpg"
 
 function Hotels({ trip }) {
     const { darkMode } = useContext(ThemeContext);
@@ -38,6 +38,34 @@ function Hotels({ trip }) {
 
     }, [trip]);
 
+    // const getPlacePhotos = async () => {
+    //     const hotelPhotosObj = {};
+    
+    //     for (const hotel of trip?.tripData?.hotels) {
+    //         const data = { textQuery: `${hotel.hotelName},${hotel.hotelAddress}` }; // Pass hotel name for each
+    //         try {
+    //             const result = await GetPlaceDetails(data);
+    //             let photoURL = null;
+    
+    //             // Loop to find a valid photo URL, starting from index 1, up to index 9
+    //             for (let i = 0; i <= 9; i++) {
+    //                 const photo = result?.places[0]?.photos[i];
+    //                 if (photo) {
+    //                     photoURL = PHOTO_REF_URL.replace("{NAME}", photo.name);
+    //                     break;
+    //                 }
+    //             }
+    
+    //             hotelPhotosObj[hotel.hotelName] = photoURL || "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png"; // Default image if no valid photo is found
+    //         } catch (error) {
+    //             console.error("Error fetching place details: ", error);
+    //             hotelPhotosObj[hotel.hotelName] = "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png"; // Default image in case of an error
+    //         }
+    //     }
+    
+    //     setHotelPhotos(hotelPhotosObj);
+    // };
+    
     const getPlacePhotos = async () => {
         const hotelPhotosObj = {};
     
@@ -45,21 +73,16 @@ function Hotels({ trip }) {
             const data = { textQuery: `${hotel.hotelName},${hotel.hotelAddress}` }; // Pass hotel name for each
             try {
                 const result = await GetPlaceDetails(data);
-                let photoURL = null;
-    
-                // Loop to find a valid photo URL, starting from index 1, up to index 9
-                for (let i = 0; i <= 9; i++) {
-                    const photo = result?.places[0]?.photos[i];
-                    if (photo) {
-                        photoURL = PHOTO_REF_URL.replace("{NAME}", photo.name);
-                        break;
-                    }
-                }
-    
-                hotelPhotosObj[hotel.hotelName] = photoURL || "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png"; // Default image if no valid photo is found
+                const photo = result?.places[0]?.photos?.[0]; // Get the first photo directly
+                hotelPhotosObj[hotel.hotelName] = PHOTO_REF_URL.replace("{NAME}", photo.name) // Use the first photo
+; // Default image if no valid photo is found
+                // hotelPhotosObj[hotel.hotelName] =
+                //     photo
+                //         ? PHOTO_REF_URL.replace("{NAME}", photo.name) // Use the first photo
+                //         : TimeToTravel; // Default image if no valid photo is found
             } catch (error) {
                 console.error("Error fetching place details: ", error);
-                hotelPhotosObj[hotel.hotelName] = "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png"; // Default image in case of an error
+                hotelPhotosObj[hotel.hotelName] = TimeToTravel; // Default image in case of an error
             }
         }
     
@@ -92,7 +115,7 @@ function Hotels({ trip }) {
                                             {/* Hotel Image */}
                                             <img
                                                 className={`w-full h-48 sm:h-56 md:h-64 lg:h-72 object-cover transition-transform duration-300 group-hover:scale-110`}
-                                                src={hotelPhotos[hotel.hotelName] || "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png"}  
+                                                src={hotelPhotos[hotel.hotelName] || TimeToTravel}  
                                                 alt={hotel.hotelName}
                                             />
                                             {/* Overlay */}

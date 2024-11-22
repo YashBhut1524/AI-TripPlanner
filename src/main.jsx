@@ -14,6 +14,7 @@ import { UserProfileProvider } from "./context/UserProfileContext";
 import ViewTrip from "./pages/viewTrip/ViewTrip";
 import ThemeIcon from "./components/custom/ThemeIcon";
 import Footer from "./components/custom/Footer";
+import MyTrips from "./pages/MyTrips/MyTrips";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
   {
     path: "/view-trip/:tripId",
     element: <ViewTrip />
+  },
+  {
+    path: "/my-trips",
+    element: <MyTrips />
   }
 ], {
   future: {

@@ -258,8 +258,8 @@ function CreateTrip() {
                             <div
                                 key={index}
                                 className={`p-4 border rounded-lg transition-transform transform hover:scale-105 hover:shadow-xl cursor-pointer 
-                                    ${darkMode ? "bg-[#1e1e2e] border-gray-700 text-white" : "bg-white border-gray-300 text-black"}
-                                    ${formData?.traveler === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#713ae3]"}` : ""} 
+                                    ${darkMode ? "bg-[#1e1e2e] border-gray-700 text-white" : " border-gray-300 text-black"}
+                                    ${formData?.traveler === option.title ? `bg-[#6200ea] scale-[105%] shadow-md text-white ${darkMode ? "border-[#6200ea]" : "border-[#7735F7] bg-[#713ae2]"}` : ""} 
                                     ${errors.traveler ? "border-red-500" : ""}`} // Red border on error
                                 onClick={() => {
                                     handleInputChange("traveler", option.title);
