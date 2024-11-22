@@ -76,9 +76,14 @@ Provide a JSON output structured as follows:
          - "bestTimetoVisit"
 
 **Important Instructions:**
-- Include at least **5 hotels** matching the budget and travelers, with full details for each hotel.
-- For each request Provide fully detailed plan for all days. Each day should be represented as day1,day2, etc., and each day should contain a plan with all required details dont keep //Add day 6 plan here following the same structure put real values. Try to add atleast 2-3 activity and max till 5-6 activity perday
-- Avoid repeating activities unless necessary, and ensure sufficient variety.
-- Do not include any comments, placeholders, or invalid JSON syntax like \`//...\`. Ensure the JSON is valid and parseable.
-- Output only valid JSON.
+-Please dont give name like Example-Hotel etc i want real names for it other wise just dont add that hotel and also dont include comments, just give me JSON that can be parse without any error
+-In hotel please provide real details of the hotel with proper address
+- Provide only real, accurate, and verifiable data. If limited information is available, include only the authentic details, even if fewer activities or options are provided.
+- Ensure at least **2-3 hotels** are listed, aligned with the budget and traveler requirements, and provide complete details for each.
+- For each request, deliver a fully detailed plan for all days. Each day should be represented as day1, day2, and so on, with a comprehensive plan including all required details. Do not leave placeholders like //Add day 6 plan here. Use real data instead.
+- Aim for at least 2-3 activities per day, with a maximum of 5-6, ensuring variety and avoiding unnecessary repetition.
+- Use valid JSON syntax only. Avoid comments, placeholders, or any invalid syntax such as \`//...\`.
+- Include the **actual names of hotels** that exist in the location, with accurate details such as address, price range, rating, and more. Do not use placeholders or generic names like 'Hotel A' or 'Hotel B'.
+- Ensure the output is valid and parseable JSON.
+-Dont include Departure as day Itinerary.
 `;

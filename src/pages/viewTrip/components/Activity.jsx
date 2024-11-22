@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { Button } from "@/components/ui/button";
 import { FaMapLocationDot } from "react-icons/fa6";
@@ -21,11 +22,11 @@ function Activity({ activity, trip }) {
 
         try {
             const result = await GetPlaceDetails(data);
-            const photo = result?.places[0]?.photos?.[0]; // Get the first photo
+            const photo = result?.places[0]?.photos?.[Math.floor(Math.random() * 10)]; // Get the first photo
             const photoURL = photo ? PHOTO_REF_URL.replace("{NAME}", photo.name) : TimeToTravel; // Fallback to TimeToTravel if no photo found
             setPhoto(photoURL);
         } catch (error) {
-            console.error("Error fetching place details: ", error);
+            // console.error("Error fetching place details: ", error);
             setPhoto(TimeToTravel); // Fallback to TimeToTravel on error
         }
     };

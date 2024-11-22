@@ -38,6 +38,34 @@ function Hotels({ trip }) {
 
     }, [trip]);
 
+    const getPlacePhotos = async () => {
+        const hotelPhotosObj = {};
+    
+        for (const hotel of trip?.tripData?.hotels) {
+            const data = { textQuery: `${hotel.hotelName},${trip?.userPreferences?.location?.label}` }; // Pass hotel name for each
+            try {
+                const result = await GetPlaceDetails(data);
+                let photoURL = null;
+    
+                // Loop to find a valid photo URL, starting from index 1, up to index 9
+                for (let i = 0; i <= 9; i++) {
+                    const photo = result?.places[0]?.photos[0];
+                    if (photo) {
+                        photoURL = PHOTO_REF_URL.replace("{NAME}", photo.name);
+                        break;
+                    }
+                }
+    
+                hotelPhotosObj[hotel.hotelName] = photoURL || "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png"; // Default image if no valid photo is found
+            } catch (error) {
+                console.error("Error fetching place details: ", error);
+                hotelPhotosObj[hotel.hotelName] = "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png"; // Default image in case of an error
+            }
+        }
+    
+        setHotelPhotos(hotelPhotosObj);
+    };
+    
     // const getPlacePhotos = async () => {
     //     const hotelPhotosObj = {};
     
@@ -45,49 +73,15 @@ function Hotels({ trip }) {
     //         const data = { textQuery: `${hotel.hotelName},${hotel.hotelAddress}` }; // Pass hotel name for each
     //         try {
     //             const result = await GetPlaceDetails(data);
-    //             let photoURL = null;
-    
-    //             // Loop to find a valid photo URL, starting from index 1, up to index 9
-    //             for (let i = 0; i <= 9; i++) {
-    //                 const photo = result?.places[0]?.photos[i];
-    //                 if (photo) {
-    //                     photoURL = PHOTO_REF_URL.replace("{NAME}", photo.name);
-    //                     break;
-    //                 }
-    //             }
-    
-    //             hotelPhotosObj[hotel.hotelName] = photoURL || "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png"; // Default image if no valid photo is found
+    //             const photo = result?.places[0]?.photos?.[0]; // Get the first photo directly
+    //             hotelPhotosObj[hotel.hotelName] = PHOTO_REF_URL.replace("{NAME}", photo.name) // Use the first photo
     //         } catch (error) {
     //             console.error("Error fetching place details: ", error);
-    //             hotelPhotosObj[hotel.hotelName] = "https://salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled.png"; // Default image in case of an error
+    //             hotelPhotosObj[hotel.hotelName] = TimeToTravel; // Default image in case of an error
     //         }
     //     }
-    
     //     setHotelPhotos(hotelPhotosObj);
     // };
-    
-    const getPlacePhotos = async () => {
-        const hotelPhotosObj = {};
-    
-        for (const hotel of trip?.tripData?.hotels) {
-            const data = { textQuery: `${hotel.hotelName},${hotel.hotelAddress}` }; // Pass hotel name for each
-            try {
-                const result = await GetPlaceDetails(data);
-                const photo = result?.places[0]?.photos?.[0]; // Get the first photo directly
-                hotelPhotosObj[hotel.hotelName] = PHOTO_REF_URL.replace("{NAME}", photo.name) // Use the first photo
-; // Default image if no valid photo is found
-                // hotelPhotosObj[hotel.hotelName] =
-                //     photo
-                //         ? PHOTO_REF_URL.replace("{NAME}", photo.name) // Use the first photo
-                //         : TimeToTravel; // Default image if no valid photo is found
-            } catch (error) {
-                console.error("Error fetching place details: ", error);
-                hotelPhotosObj[hotel.hotelName] = TimeToTravel; // Default image in case of an error
-            }
-        }
-    
-        setHotelPhotos(hotelPhotosObj);
-    };
     
 
     const dialogStyles = darkMode
@@ -160,7 +154,7 @@ function Hotels({ trip }) {
                                             title="View on Map"
                                         >
                                             <a
-                                                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hotel.hotelName)} ${encodeURIComponent(hotel.hotelAddress)}`}
+                                                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hotel.hotelName)}, ${encodeURIComponent(trip?.userPreferences?.location?.label)}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                             >

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "@/service/FireBaseConfig";
 import ThemeContext from "@/context/ThemeContext";
@@ -18,7 +18,7 @@ export default function MyTrips() {
 
     const handleRetry = () => {
         window.location.reload();
-    }
+    };
 
     const getUserTrips = async () => {
         const user = JSON.parse(localStorage.getItem("user"));
@@ -48,12 +48,11 @@ export default function MyTrips() {
     };
 
     if (!isAuthorized) {
-        setUserTrips([]);
-
         return (
             <div
-                className={`flex flex-col justify-start items-center pt-10 pb-20 px-5 sm:px-8 h-auto ${darkMode ? "bg-[#0d0d1a] text-white" : "bg-[#f9f9f9] text-gray-800"
-                    }`}
+                className={`flex flex-col justify-start items-center pt-10 pb-20 px-5 sm:px-8 h-auto ${
+                    darkMode ? "bg-[#0d0d1a] text-white" : "bg-[#f9f9f9] text-gray-800"
+                }`}
             >
                 <h2 className="font-bold text-3xl mb-4 text-center">Unauthorized Access</h2>
                 <p className="text-lg text-center mb-6">
@@ -61,19 +60,21 @@ export default function MyTrips() {
                 </p>
                 <div className="flex flex-wrap gap-4 justify-center w-full max-w-sm sm:max-w-md">
                     <button
-                        className={`px-6 py-3 w-full sm:w-auto rounded-lg font-semibold ${darkMode
+                        className={`px-6 py-3 w-full sm:w-auto rounded-lg font-semibold ${
+                            darkMode
                                 ? "bg-[#5e17eb] text-white hover:bg-[#7735f7]"
                                 : "bg-[#6200ea] text-white hover:bg-[#4500a5]"
-                            }`}
+                        }`}
                         onClick={handleRetry}
                     >
                         Retry
                     </button>
                     <button
-                        className={`px-6 py-3 w-full sm:w-auto rounded-lg font-semibold ${darkMode
+                        className={`px-6 py-3 w-full sm:w-auto rounded-lg font-semibold ${
+                            darkMode
                                 ? "bg-gray-600 text-white hover:bg-gray-500"
                                 : "bg-gray-300 text-gray-800 hover:bg-gray-400"
-                            }`}
+                        }`}
                         onClick={() => navigate("/")}
                     >
                         Go to Homepage
@@ -96,7 +97,6 @@ export default function MyTrips() {
     }
 
     if (userTrips.length === 0) {
-        setUserTrips([]);
         return (
             <div
                 className={`flex flex-col justify-center items-center h-[40vh] pb-5 ${
@@ -132,6 +132,34 @@ export default function MyTrips() {
                 {userTrips.map((trip) => (
                     <TripCardItem key={trip.id} trip={trip} />
                 ))}
+
+                {/* Add Trip Card */}
+                <div
+                    className={`relative flex items-center justify-center p-4 rounded-xl border cursor-pointer ${
+                        darkMode
+                            ? "bg-[#1a1a2e] border-[#5e17eb] hover:border-[#7735f7] hover:shadow-[0_4px_20px_rgba(94,23,235,0.6)] text-white"
+                            : "bg-white border-gray-300 hover:border-[#6200ea] hover:shadow-[0_4px_15px_rgba(98,0,234,0.2)] text-gray-900"
+                    } transition-all duration-300`}
+                >
+                    <Link to="/create-trip">
+                        <div className="flex flex-col items-center justify-center">
+                            <div
+                                className={`text-4xl font-bold ${
+                                    darkMode ? "text-[#5e17eb]" : "text-[#6200ea]"
+                                } transition-transform duration-300 hover:scale-110`}
+                            >
+                                +
+                            </div>
+                            <p
+                                className={`mt-2 text-sm font-medium ${
+                                    darkMode ? "text-gray-400" : "text-gray-700"
+                                }`}
+                            >
+                                Add Trip
+                            </p>
+                        </div>
+                    </Link>
+                </div>
             </div>
         </div>
     );
