@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import ThemeContext from "@/context/ThemeContext";
-import { FaSquareXTwitter, FaInstagram, FaSquareFacebook, FaLinkedin  } from "react-icons/fa6";
+import { FaSquareXTwitter, FaInstagram, FaSquareGithub, FaLinkedin  } from "react-icons/fa6";
 
 function Footer() {
     const { darkMode } = useContext(ThemeContext);
@@ -51,24 +51,24 @@ function Footer() {
                     <h2 className="text-lg font-bold mb-4">Connect With Us</h2>
                     <ul className="flex space-x-4">
                         <li>
-                            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-75">
-                                <FaSquareFacebook className="h-8 w-8"></FaSquareFacebook>
+                            <a href="https://github.com/YashBhut1524" target="_blank" rel="noopener noreferrer" className="hover:opacity-75">
+                                <FaSquareGithub className="h-8 w-8"></FaSquareGithub>
                             </a>
                         </li>
                         <li>
-                            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-75">
+                            <a href="https://x.com/YaShDuDe5" target="_blank" rel="noopener noreferrer" className="hover:opacity-75">
                                 <FaSquareXTwitter className="h-8 w-8"></FaSquareXTwitter>
 
                             </a>
                         </li>
                         <li>
-                            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-75">
+                            <a href="https://www.instagram.com/yashh_1524/?igsh=MWdyaW5iYWJqaHlieQ%3D%3D" target="_blank" rel="noopener noreferrer" className="hover:opacity-75">
                                 <FaInstagram className="h-8 w-8"></FaInstagram>
 
                             </a>
                         </li>
                         <li>
-                            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-75">
+                            <a href="https://www.linkedin.com/in/yashbhut1524/" target="_blank" rel="noopener noreferrer" className="hover:opacity-75">
                                 <FaLinkedin className="h-8 w-8"></FaLinkedin>
                             </a>
                         </li>
