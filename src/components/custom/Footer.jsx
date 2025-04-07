@@ -56,13 +56,13 @@ function Footer() {
                             </a>
                         </li>
                         <li>
-                            <a href="https://x.com/YaShDuDe5" target="_blank" rel="noopener noreferrer" className="hover:opacity-75">
+                            <a href="https://x.com/YaShh1524" target="_blank" rel="noopener noreferrer" className="hover:opacity-75">
                                 <FaSquareXTwitter className="h-8 w-8"></FaSquareXTwitter>
 
                             </a>
                         </li>
                         <li>
-                            <a href="https://www.instagram.com/yashh_1524/?igsh=MWdyaW5iYWJqaHlieQ%3D%3D" target="_blank" rel="noopener noreferrer" className="hover:opacity-75">
+                            <a href="https://www.instagram.com/dev.yashh1524/" target="_blank" rel="noopener noreferrer" className="hover:opacity-75">
                                 <FaInstagram className="h-8 w-8"></FaInstagram>
 
                             </a>
